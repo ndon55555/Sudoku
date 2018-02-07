@@ -113,18 +113,18 @@ public class Board {
     }
 
     public String toString() {
-        String result = "-------------------\n";
+        StringBuilder result = new StringBuilder("-------------------\n");
 
-        for (int r = 0; r < cells.length; r++) {
-            result += "|" + cells[r][0] + "|";
+        for (ICell[] row  : this.cells) {
+            result.append("|").append(row[0]).append("|");
 
-            for (int c = 1; c < cells[0].length; c++) {
-                result += cells[r][c].toString() + "|";
+            for (int c = 1; c < row.length; c++) {
+                result.append(row[c].toString()).append("|");
             }
 
-            result += "\n-------------------\n";
+            result.append("\n-------------------\n");
         }
 
-        return result;
+        return result.toString();
     }
 }
