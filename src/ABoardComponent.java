@@ -4,7 +4,7 @@ public abstract class ABoardComponent implements IBoardComponent {
 
     // constructor
     public ABoardComponent(ICell[] cells) {
-        this.cells = SudokuUtils.validDimension(cells);
+        this.cells = SudokuUtils.validComponent(cells);
     }
 
     @Override
