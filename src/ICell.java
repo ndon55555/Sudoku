@@ -6,4 +6,6 @@ public interface ICell {
     boolean canBeFilled();
 
     FilledCell filledVersion();
+
+    Position getPosition();
 }

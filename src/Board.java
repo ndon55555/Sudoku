@@ -10,7 +10,7 @@ public class Board {
 
         for (int r = 0; r < cells.length; r++) {
             for (int c = 0; c < cells[r].length; c++) {
-                this.cells[r][c] = new UnfilledCell();
+                this.cells[r][c] = new UnfilledCell(new Position(r, c));
             }
         }
     }

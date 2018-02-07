@@ -1,7 +1,8 @@
-public class FilledCell implements ICell {
+public class FilledCell extends ACell {
     private SudokuValue value;
 
-    public FilledCell(SudokuValue value) {
+    public FilledCell(Position position, SudokuValue value) {
+        super(position);
         this.value = value;
     }
 
@@ -27,6 +28,7 @@ public class FilledCell implements ICell {
         return this;
     }
 
+    @Override
     public String toString() {
         return this.value.toString();
     }

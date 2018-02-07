@@ -2,10 +2,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UnfilledCell implements ICell {
+public class UnfilledCell extends ACell {
     private List<SudokuValue> possibleNumbers;
 
-    public UnfilledCell() {
+    public UnfilledCell(Position position) {
+        super(position);
         SudokuValue[] allNumbers = {
                 SudokuValue.ONE, SudokuValue.TWO, SudokuValue.THREE,
                 SudokuValue.FOUR, SudokuValue.FIVE, SudokuValue.SIX,
@@ -13,10 +14,6 @@ public class UnfilledCell implements ICell {
         };
 
         this.possibleNumbers = new ArrayList<>(Arrays.asList(allNumbers));
-    }
-
-    public UnfilledCell(List<SudokuValue> possibleNumbers) {
-        this.possibleNumbers = possibleNumbers;
     }
 
     @Override
@@ -37,12 +34,13 @@ public class UnfilledCell implements ICell {
     @Override
     public FilledCell filledVersion() {
         if (this.canBeFilled()) {
-            return new FilledCell(this.possibleNumbers.get(0));
+            return new FilledCell(super.getPosition(), this.possibleNumbers.get(0));
         }
 
         throw new IllegalStateException("Cannot obtain filled version.");
     }
 
+    @Override
     public String toString() {
         return SudokuValue.NONE.toString();
     }
