@@ -1,15 +1,15 @@
 // Represents a row or column in a Sudoku board
 public abstract class ABoardComponent implements IBoardComponent {
-    private ICell[] dimension;
+    private ICell[] cells;
 
     // constructor
-    public ABoardComponent(ICell[] dimension) {
-        this.dimension = SudokuUtils.validDimension(dimension);
+    public ABoardComponent(ICell[] cells) {
+        this.cells = SudokuUtils.validDimension(cells);
     }
 
     @Override
     public boolean hasValue(SudokuValue sv) {
-        for (ICell c : dimension) {
+        for (ICell c : cells) {
             if (c.getValue().equals(sv)) {
                 return true;
             }
@@ -20,8 +20,8 @@ public abstract class ABoardComponent implements IBoardComponent {
 
     @Override
     public void removeValue(SudokuValue sv) {
-        for (int i = 0; i < dimension.length; i++) {
-            this.dimension[i].remove(sv);
+        for (ICell cell : this.cells) {
+            cell.remove(sv);
         }
     }
 }
