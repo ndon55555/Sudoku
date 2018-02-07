@@ -1,9 +1,9 @@
 // Represents a row or column in a Sudoku board
-public abstract class ADimension implements IBoardComponent {
+public abstract class ABoardComponent implements IBoardComponent {
     private ICell[] dimension;
 
     // constructor
-    public ADimension(ICell[] dimension) {
+    public ABoardComponent(ICell[] dimension) {
         this.dimension = SudokuUtils.validDimension(dimension);
     }
 

@@ -48,11 +48,13 @@ public class Board {
         if (startR % 3 != 0 || startC % 3 != 0) {
             return this.getSection(startR - (startR % 3), startC - (startC % 3));
         } else {
-            ICell[][] section = new ICell[3][3];
+            ICell[] section = new ICell[9];
+            int i = 0;
 
             for (int r = startR; r < startR + 3; r++) {
                 for (int c = startC; c < startC + 3; c++) {
-                    section[r - startR][c - startC] = this.cells[r][c];
+                    section[i] = this.cells[r][c];
+                    i++;
                 }
             }
 
