@@ -1,31 +1,27 @@
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class Board {
     private ICell[][] cells;
 
     // constructor
-    public Board(FilledCell[][] board) {
+    public Board() {
         this.cells = new ICell[9][9];
 
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                if (board[r][c] == null) {
-                    cells[r][c] = new UnfilledCell();
-                } else {
-                    List<SudokuValue> listWithSingleVal= new LinkedList<>();
-                    listWithSingleVal.add(board[r][c].getValue());
-                    cells[r][c] = new UnfilledCell(listWithSingleVal);
-                }
+        for (int r = 0; r < cells.length; r++) {
+            for (int c = 0; c < cells[r].length; c++) {
+                this.cells[r][c] = new UnfilledCell();
             }
         }
+    }
+    // constructor
+    public Board(FilledCell[][] board) {
+        this();
 
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                if (this.cells[r][c].canBeFilled()) {
-                    this.fill(this.cells[r][c], new Position(r, c));
+        for (int r = 0; r < cells.length; r++) {
+            for (int c = 0; c < cells[r].length; c++) {
+                if (board[r][c] != null) {
+                    this.fill(board[r][c], new Position(r, c));
                 }
             }
         }
