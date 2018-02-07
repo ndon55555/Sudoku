@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 // Represents a row or column in a Sudoku board
 public abstract class ABoardComponent implements IBoardComponent {
     private ICell[] cells;
@@ -8,20 +11,24 @@ public abstract class ABoardComponent implements IBoardComponent {
     }
 
     @Override
-    public boolean hasValue(SudokuValue sv) {
-        for (ICell c : cells) {
-            if (c.getValue().equals(sv)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
     public void removeValue(SudokuValue sv) {
         for (ICell cell : this.cells) {
             cell.remove(sv);
         }
+    }
+
+    @Override
+    public boolean isUnique() {
+        Set<FilledCell> filled = new HashSet<>();
+
+        for (ICell cell : this.cells) {
+            if (cell instanceof UnfilledCell) {
+                return false;
+            } else {
+                filled.add((FilledCell) cell);
+            }
+        }
+
+        return filled.size() == 9;
     }
 }

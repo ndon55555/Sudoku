@@ -14,6 +14,7 @@ public class Board {
             }
         }
     }
+
     // constructor
     public Board(FilledCell[][] board) {
         this();
@@ -115,10 +116,28 @@ public class Board {
         return true;
     }
 
+    public boolean isValidSolved() {
+        for (int i = 0; i < 9; i++) {
+            if (!this.getRow(i).isUnique() || !this.getCol(i).isUnique()) {
+                return false;
+            }
+        }
+
+        for (int r = 0; r < 9; r += 3) {
+            for (int c = 0; c < 9; c += 3) {
+                if (!this.getSection(r, c).isUnique()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public String toString() {
         StringBuilder result = new StringBuilder("-------------------\n");
 
-        for (ICell[] row  : this.cells) {
+        for (ICell[] row : this.cells) {
             result.append("|").append(row[0]).append("|");
 
             for (int c = 1; c < row.length; c++) {

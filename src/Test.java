@@ -45,5 +45,6 @@ public class Test {
         System.out.println(b);
         b.solve();
         System.out.println(b);
+        System.out.println(b.isValidSolved());
     }
 }
