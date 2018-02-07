@@ -17,6 +17,7 @@ public class Board {
     // constructor
     public Board(FilledCell[][] board) {
         this();
+        board = SudokuUtils.validBoard(board);
 
         for (int r = 0; r < cells.length; r++) {
             for (int c = 0; c < cells[r].length; c++) {

@@ -1,5 +1,5 @@
 public class SudokuUtils {
-    public static ICell[][] validBoard(FilledCell[][] cells) {
+    public static FilledCell[][] validBoard(FilledCell[][] cells) {
         if (cells == null) {
             throw new NullPointerException("Expected 2D array of FilledCells but received null.");
         }
