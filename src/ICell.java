@@ -1,4 +1,4 @@
-public interface ICell {
+public interface ICell extends Comparable<ICell> {
     SudokuValue getValue();
 
     void remove(SudokuValue sv);

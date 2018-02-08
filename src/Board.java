@@ -1,16 +1,20 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Predicate;
 
 public class Board {
-    private ICell[][] cells;
+    private Set<UnfilledCell> unfilled;
+    private Set<FilledCell> filled;
 
     // constructor
     public Board() {
-        this.cells = new ICell[9][9];
+        this.unfilled = new HashSet<>();
+        this.filled = new HashSet<>();
 
-        for (int r = 0; r < cells.length; r++) {
-            for (int c = 0; c < cells[r].length; c++) {
-                this.cells[r][c] = new UnfilledCell(new Position(r, c));
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                this.unfilled.add(new UnfilledCell(new Position(r, c)));
             }
         }
     }
@@ -20,100 +24,101 @@ public class Board {
         this();
         board = SudokuUtils.validBoard(board);
 
-        for (int r = 0; r < cells.length; r++) {
-            for (int c = 0; c < cells[r].length; c++) {
+        Set<ICell> filledCells = new HashSet<>();
+
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
                 if (board[r][c] != null) {
-                    this.fill(board[r][c], new Position(r, c));
+                    filledCells.add(board[r][c]);
                 }
             }
         }
+
+        this.fill(filledCells);
     }
 
     // 0 <= r < 9
     private Row getRow(int r) {
-        return new Row(this.cells[r]);
+        Predicate<ICell> sameRow = cell -> cell.getPosition().getX() == r;
+
+        return new Row(this.getSatisfying(sameRow).toArray(new ICell[9]));
     }
 
     // 0 <= c < 9
     private Column getCol(int c) {
-        ICell[] col = new ICell[9];
+        Predicate<ICell> sameCol = cell -> cell.getPosition().getY() == c;
 
-        for (int r = 0; r < cells.length; r++) {
-            col[r] = cells[r][c];
-        }
-
-        return new Column(col);
+        return new Column(this.getSatisfying(sameCol).toArray(new ICell[9]));
     }
 
     // 0 <= s < 9
     private Section getSection(int startR, int startC) {
         if (startR % 3 != 0 || startC % 3 != 0) {
             return this.getSection(startR - (startR % 3), startC - (startC % 3));
-        } else {
-            ICell[] section = new ICell[9];
-            int i = 0;
-
-            for (int r = startR; r < startR + 3; r++) {
-                for (int c = startC; c < startC + 3; c++) {
-                    section[i] = this.cells[r][c];
-                    i++;
-                }
-            }
-
-            return new Section(section);
         }
+
+        Predicate<ICell> sameSection = cell -> {
+            Position cellPosn = cell.getPosition();
+            int x = cellPosn.getX();
+            int y = cellPosn.getY();
+
+            return (startR <= x && x < startR + 3) && (startC <= y && y < startC + 3);
+        };
+
+        return new Section(this.getSatisfying(sameSection).toArray(new ICell[9]));
     }
 
     public void solve() {
         while (!isSolved()) {
-            Map<ICell, Position> fillableCellsToPosn = getFillableCells();
-            fill(fillableCellsToPosn);
+            Set<ICell> fillableCells = getFillableCells();
+            fill(fillableCells);
         }
     }
 
-    private Map<ICell, Position> getFillableCells() {
-        Map<ICell, Position> fillableCellsToPosn = new HashMap<>();
+    private Set<ICell> getFillableCells() {
+        return this.getSatisfying(ICell::canBeFilled);
+    }
 
-        for (int r = 0; r < cells.length; r++) {
-            for (int c = 0; c < cells[0].length; c++) {
-                if (cells[r][c].canBeFilled()) {
-                    fillableCellsToPosn.put(cells[r][c], new Position(r, c));
-                }
+    private Set<ICell> getSatisfying(Predicate<ICell> p) {
+        Set<ICell> satisfyingElements = new HashSet<>();
+
+        for (ICell cell : this.unfilled) {
+            if (p.test(cell)) {
+                satisfyingElements.add(cell);
             }
         }
 
-        return fillableCellsToPosn;
+        for (ICell cell : this.filled) {
+            if (p.test(cell)) {
+                satisfyingElements.add(cell);
+            }
+        }
+
+        return satisfyingElements;
     }
 
-    private void fill(Map<ICell, Position> fillableCellsToPosn) {
-        for (ICell cellToFill : fillableCellsToPosn.keySet()) {
-            Position cellPosn = fillableCellsToPosn.get(cellToFill);
-            fill(cellToFill, cellPosn);
+    private void fill(Set<ICell> fillableCells) {
+        for (ICell cellToFill : fillableCells) {
+            fillCell(cellToFill);
         }
     }
 
-    private void fill(ICell cellToFill, Position cellPosn) {
-        ICell filledVersion = cellToFill.filledVersion();
+    private void fillCell(ICell cellToFill) {
+        FilledCell filledVersion = cellToFill.filledVersion();
         SudokuValue valToRemove = filledVersion.getValue();
+        Position cellPosn = cellToFill.getPosition();
         Row cellRow = this.getRow(cellPosn.getX());
         Column cellCol = this.getCol(cellPosn.getY());
         Section cellSection = this.getSection(cellPosn.getX(), cellPosn.getY());
         cellRow.removeValue(valToRemove);
         cellCol.removeValue(valToRemove);
         cellSection.removeValue(valToRemove);
-        this.cells[cellPosn.getX()][cellPosn.getY()] = filledVersion;
+        this.unfilled.remove(cellToFill);
+        this.filled.add(filledVersion);
     }
 
     public boolean isSolved() {
-        for (ICell[] row : this.cells) {
-            for (ICell cell : row) {
-                if (cell instanceof UnfilledCell) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return this.unfilled.isEmpty();
     }
 
     public boolean isValidSolved() {
@@ -135,16 +140,17 @@ public class Board {
     }
 
     public String toString() {
+        Set<ICell> allCells = new TreeSet<>();
+        allCells.addAll(this.filled);
+        allCells.addAll(this.unfilled);
         StringBuilder result = new StringBuilder("-------------------\n");
 
-        for (ICell[] row : this.cells) {
-            result.append("|").append(row[0]).append("|");
+        for (ICell cell : allCells) {
+            result.append("|").append(cell.toString());
 
-            for (int c = 1; c < row.length; c++) {
-                result.append(row[c].toString()).append("|");
+            if (cell.getPosition().getY() == 8) {
+                result.append("|\n-------------------\n");
             }
-
-            result.append("\n-------------------\n");
         }
 
         return result.toString();
