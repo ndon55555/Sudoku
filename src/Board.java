@@ -20,21 +20,12 @@ public class Board {
     }
 
     // constructor
-    public Board(FilledCell[][] board) {
+    public Board(Set<FilledCell> filledCells) {
         this();
-        board = SudokuUtils.validBoard(board);
 
-        Set<ICell> filledCells = new HashSet<>();
-
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                if (board[r][c] != null) {
-                    filledCells.add(board[r][c]);
-                }
-            }
+        for (FilledCell cell : filledCells) {
+            this.fillCell(cell);
         }
-
-        this.fill(filledCells);
     }
 
     // 0 <= r < 9
