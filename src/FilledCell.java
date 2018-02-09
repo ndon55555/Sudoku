@@ -13,9 +13,6 @@ public class FilledCell extends ACell {
 
     @Override
     public void remove(SudokuValue sv) {
-        if (sv.equals(this.value)) {
-            throw new IllegalArgumentException("This ICell has already been filled with the given SudokuValue to remove.");
-        }
     }
 
     @Override

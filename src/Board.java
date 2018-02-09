@@ -60,7 +60,7 @@ public class Board {
     }
 
     public void solve() {
-        while (!isSolved()) {
+        while (this.isValid() && !this.isCompletelyFilled()) {
             Set<ICell> fillableCells = getFillableCells();
             fill(fillableCells);
         }
@@ -108,11 +108,11 @@ public class Board {
         this.filled.add(filledVersion);
     }
 
-    public boolean isSolved() {
+    public boolean isCompletelyFilled() {
         return this.unfilled.isEmpty();
     }
 
-    public boolean isValidSolved() {
+    public boolean isValid() {
         for (int i = 0; i < 9; i++) {
             if (!this.getRow(i).isUnique() || !this.getCol(i).isUnique()) {
                 return false;

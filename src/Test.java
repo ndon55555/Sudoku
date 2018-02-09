@@ -46,8 +46,11 @@ public class Test {
 
         Board b = new Board(filledCells);
         System.out.println(b);
+        long start = System.nanoTime();
         b.solve();
+        long end = System.nanoTime();
         System.out.println(b);
-        System.out.println(b.isValidSolved());
+        System.out.println("Took " + (end - start) / 1000000000.0 + " seconds to solve.");
+        System.out.println(b.isValid());
     }
 }
