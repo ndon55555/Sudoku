@@ -1,9 +1,9 @@
 public class Position implements Comparable<Position> {
-    int x;
-    int y;
+    private final int x;
+    private final int y;
 
     // constructor
-    public Position(int x, int y) {
+    Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -28,5 +28,10 @@ public class Position implements Comparable<Position> {
         hash = hash * 31 + this.y;
 
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.x + ", " + this.y + ")";
     }
 }

@@ -3,12 +3,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
-public class Board {
+public class Board implements DeepCloneable<Board> {
     private Set<UnfilledCell> unfilled;
     private Set<FilledCell> filled;
 
     // constructor
-    public Board() {
+    private Board() {
         this.unfilled = new HashSet<>();
         this.filled = new HashSet<>();
 
@@ -20,7 +20,7 @@ public class Board {
     }
 
     // constructor
-    public Board(Set<FilledCell> filledCells) {
+    Board(Set<FilledCell> filledCells) {
         this();
 
         for (FilledCell cell : filledCells) {
@@ -59,15 +59,40 @@ public class Board {
         return new Section(this.getSatisfying(sameSection).toArray(new ICell[9]));
     }
 
-    public void solve() {
-        while (this.isValid() && !this.isCompletelyFilled()) {
-            Set<ICell> fillableCells = getFillableCells();
-            fill(fillableCells);
+    private ICell getNextUnfilledCell() {
+        if (this.unfilled.isEmpty()) {
+            return null;
+        } else {
+            UnfilledCell fewestPossibilities = this.unfilled.iterator().next();
+
+            for (UnfilledCell cell : this.unfilled) {
+                if (cell.getPossibleNumbers().size() < fewestPossibilities.getPossibleNumbers().size()) {
+                    fewestPossibilities = cell;
+                }
+            }
+
+            return fewestPossibilities;
         }
     }
 
-    private Set<ICell> getFillableCells() {
-        return this.getSatisfying(ICell::canBeFilled);
+    public void solve() {
+        ICell cell = this.getNextUnfilledCell();
+
+        if (cell != null) {
+            for (SudokuValue val : cell.getPossibleNumbers()) {
+                Board possibleBoard = this.deepCopy();
+                ICell possibleFilledVersion = new FilledCell(cell.getPosition(), val);
+
+                possibleBoard.fillCell(possibleFilledVersion);
+                possibleBoard.solve();
+
+                if (possibleBoard.isValid() && possibleBoard.isCompletelyFilled()) {
+                    this.unfilled = possibleBoard.unfilled;
+                    this.filled = possibleBoard.filled;
+                    break;
+                }
+            }
+        }
     }
 
     private Set<ICell> getSatisfying(Predicate<ICell> p) {
@@ -86,12 +111,6 @@ public class Board {
         }
 
         return satisfyingElements;
-    }
-
-    private void fill(Set<ICell> fillableCells) {
-        for (ICell cellToFill : fillableCells) {
-            fillCell(cellToFill);
-        }
     }
 
     private void fillCell(ICell cellToFill) {
@@ -128,6 +147,11 @@ public class Board {
         }
 
         return true;
+    }
+
+    @Override
+    public Board deepCopy() {
+        return new Board(new HashSet<>(this.filled));
     }
 
     public String toString() {

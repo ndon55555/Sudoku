@@ -1,7 +1,10 @@
+import java.util.LinkedList;
+import java.util.List;
+
 public class FilledCell extends ACell {
     private SudokuValue value;
 
-    public FilledCell(Position position, SudokuValue value) {
+    FilledCell(Position position, SudokuValue value) {
         super(position);
         this.value = value;
     }
@@ -16,11 +19,6 @@ public class FilledCell extends ACell {
     }
 
     @Override
-    public boolean canBeFilled() {
-        return false;
-    }
-
-    @Override
     public FilledCell filledVersion() {
         return this;
     }
@@ -28,5 +26,18 @@ public class FilledCell extends ACell {
     @Override
     public String toString() {
         return this.value.toString();
+    }
+
+    @Override
+    public List<SudokuValue> getPossibleNumbers() {
+        List<SudokuValue> possibleNumbers = new LinkedList<>();
+        possibleNumbers.add(this.value);
+
+        return possibleNumbers;
+    }
+
+    @Override
+    public ICell deepCopy() {
+        return new FilledCell(this.getPosition(), this.value);
     }
 }

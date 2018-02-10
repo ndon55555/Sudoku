@@ -1,11 +1,13 @@
-public interface ICell extends Comparable<ICell> {
+import java.util.List;
+
+public interface ICell extends Comparable<ICell>, DeepCloneable<ICell> {
     SudokuValue getValue();
 
     void remove(SudokuValue sv);
 
-    boolean canBeFilled();
-
     FilledCell filledVersion();
 
     Position getPosition();
+
+    List<SudokuValue> getPossibleNumbers();
 }
